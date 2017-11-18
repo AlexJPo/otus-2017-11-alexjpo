@@ -31,7 +31,8 @@
 
     <build>
         <finalName>${project.name}</finalName>
-      <plugins>
+        <plugins>
+            <!-- MAVEN JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -44,34 +45,75 @@
                     </archive>
                 </configuration>
             </plugin>
+            <!-- /MAVEN JAR -->
 
-         <plugin>
-             <groupId>org.apache.maven.plugins</groupId>
-             <artifactId>maven-assembly-plugin</artifactId>
-             <version>3.0.0</version>
-             <executions>
-                 <execution>
-                     <id>my-maven-assembly-plugin</id>
-                     <phase>package</phase>
-                     <goals>
-                         <goal>single</goal>
-                     </goals>
-                 </execution>
-             </executions>
-             <configuration>
-                 <appendAssemblyId>false</appendAssemblyId>
-                 <descriptorRefs>
-                     <descriptorRef>jar-with-dependencies</descriptorRef>
-                 </descriptorRefs>
-                 <archive>
-                     <manifest>
-                         <mainClass>otus.AppStart</mainClass>
-                     </manifest>
-                 </archive>
-             </configuration>
-         </plugin>
+            <!-- MAVEN ASSEMBLY -->
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-assembly-plugin</artifactId>
+                 <version>3.0.0</version>
+                 <executions>
+                     <execution>
+                         <id>my-maven-assembly-plugin</id>
+                         <phase>package</phase>
+                         <goals>
+                             <goal>single</goal>
+                         </goals>
+                     </execution>
+                 </executions>
+                 <configuration>
+                     <appendAssemblyId>false</appendAssemblyId>
+                     <descriptorRefs>
+                         <descriptorRef>jar-with-dependencies</descriptorRef>
+                     </descriptorRefs>
+                     <archive>
+                         <manifest>
+                             <mainClass>otus.AppStart</mainClass>
+                         </manifest>
+                     </archive>
+                 </configuration>
+             </plugin>
+            <!-- /MAVEN ASSEMBLY -->
 
-     </plugins>
+            <!-- PROGUARD -->
+            <plugin>
+                <groupId>com.github.wvengen</groupId>
+                <artifactId>proguard-maven-plugin</artifactId>
+                <version>2.0.8</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals><goal>proguard</goal></goals>
+                        <configuration>
+                            <injar>${project.build.finalName}.jar</injar> <!-- make sure to obfuscate the jar with dependencies -->
+                            <proguardVersion>5.2</proguardVersion>
+                            <options>
+                                <option>-allowaccessmodification</option>
+                                <option>-dontoptimize</option>
+                                <option>-dontshrink</option>
+                                <option>-dontnote</option>
+                                <option>-dontwarn</option> <!-- added option to ignore com.sun missing classes -->
+                                <option>-keepattributes Signature</option>
+                                <option>-keep class otus.AppStart { *; }</option>
+                            </options>
+                            <libs>
+                                <lib>${java.home}/lib/rt.jar</lib>
+                            </libs>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>net.sf.proguard</groupId>
+                                    <artifactId>proguard-base</artifactId>
+                                    <version>5.2</version>
+                                    <scope>runtime</scope>
+                                </dependency>
+                            </dependencies>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- /PROGUARD -->
+
+        </plugins>
     </build>
 
 </project>
