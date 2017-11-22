@@ -15,7 +15,6 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <com.google.guava.version>23.0</com.google.guava.version>
-        <my.variable>42</my.variable>
     </properties>
 
     <dependencies>
@@ -99,14 +98,14 @@
                             <libs>
                                 <lib>${java.home}/lib/rt.jar</lib>
                             </libs>
-                            <dependencies>
+                            <!--<dependencies>
                                 <dependency>
                                     <groupId>net.sf.proguard</groupId>
                                     <artifactId>proguard-base</artifactId>
                                     <version>5.2</version>
                                     <scope>runtime</scope>
                                 </dependency>
-                            </dependencies>
+                            </dependencies>-->
                         </configuration>
                     </execution>
                 </executions>
