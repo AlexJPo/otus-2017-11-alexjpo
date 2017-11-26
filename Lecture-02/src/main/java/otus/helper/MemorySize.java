@@ -5,19 +5,6 @@ import otus.model.MyClass;
 public class MemorySize {
     private static long SLEEP_INTERVAL = 10;
 
-    public void run() throws InterruptedException {
-        System.gc();
-        Thread.sleep(SLEEP_INTERVAL);
-        Runtime runtime = Runtime.getRuntime();
-
-        System.out.println("***** Heap utilization statistics [Byte] *****\n");
-        System.out.println("Total Memory: " + runtime.totalMemory());
-        System.out.println("Free Memory: " + runtime.freeMemory());
-        System.out.println("Used Memory: " + (runtime.totalMemory() - runtime.freeMemory()));
-        System.out.println("Max Memory: " + runtime.maxMemory());
-        System.out.println("\n");
-    }
-
     public long getEmptyObjectSize() {
         long beforeMemory = getMemoryUse();
         Object emptyString = new Object();
