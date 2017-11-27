@@ -1,10 +1,12 @@
 package otus.helper;
 
+import otus.interfaces.IMemorySize;
 import otus.model.MyClass;
 
-public class MemorySize {
+public class MemorySize implements IMemorySize {
     private static long SLEEP_INTERVAL = 10;
 
+    @Override
     public long getEmptyObjectSize() {
         long beforeMemory = getMemoryUse();
         Object emptyString = new Object();
@@ -14,6 +16,7 @@ public class MemorySize {
         return size;
     }
 
+    @Override
     public long getEmptyStringSize() {
         long beforeMemory = getMemoryUse();
         String emptyString = new String("");
@@ -23,6 +26,7 @@ public class MemorySize {
         return size;
     }
 
+    @Override
     public long getEmptyArraySize() {
         long beforeMemory = getMemoryUse();
         Object[] array = new Object[0];
@@ -32,6 +36,7 @@ public class MemorySize {
         return size;
     }
 
+    @Override
     public void printMemoryInDynamic(int workTime) {
         long workTimeInSeconds = workTime * 1000;
         int sleepTimeout = 1000;
@@ -71,6 +76,7 @@ public class MemorySize {
         long freeMemory = Runtime.getRuntime().freeMemory();
         return (totalMemory - freeMemory);
     }
+
 
     private void freeMemory() {
         try {
