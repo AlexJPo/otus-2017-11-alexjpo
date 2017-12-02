@@ -5,38 +5,54 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>otus</groupId>
-    <artifactId>lecture1</artifactId>
+    <artifactId>lecture2</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>L01-maven</name>
+    <name>L02-memory</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <com.google.guava.version>23.0</com.google.guava.version>
     </properties>
-
-    <dependencies>
-        <!-- GUAVA -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${com.google.guava.version}</version>
-        </dependency>
-        <!-- /GUAVA -->
-
-    </dependencies>
 
     <build>
         <finalName>${project.name}</finalName>
         <plugins>
-            <!-- MAVEN JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.0</version>
+                <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <argLine>-Xmx512m -Xms512m -XX:-UseTLAB</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>my-maven-assembly-plugin</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
                     <archive>
                         <manifest>
                             <mainClass>otus.AppStart</mainClass>
@@ -44,37 +60,6 @@
                     </archive>
                 </configuration>
             </plugin>
-            <!-- /MAVEN JAR -->
-
-            <!-- MAVEN ASSEMBLY -->
-             <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-assembly-plugin</artifactId>
-                 <version>3.0.0</version>
-                 <executions>
-                     <execution>
-                         <id>my-maven-assembly-plugin</id>
-                         <phase>package</phase>
-                         <goals>
-                             <goal>single</goal>
-                         </goals>
-                     </execution>
-                 </executions>
-                 <configuration>
-                     <appendAssemblyId>false</appendAssemblyId>
-                     <descriptorRefs>
-                         <descriptorRef>jar-with-dependencies</descriptorRef>
-                     </descriptorRefs>
-                     <archive>
-                         <manifest>
-                             <mainClass>otus.AppStart</mainClass>
-                         </manifest>
-                     </archive>
-                 </configuration>
-             </plugin>
-            <!-- /MAVEN ASSEMBLY -->
-
-            <!-- PROGUARD -->
             <plugin>
                 <groupId>com.github.wvengen</groupId>
                 <artifactId>proguard-maven-plugin</artifactId>
@@ -98,20 +83,10 @@
                             <libs>
                                 <lib>${java.home}/lib/rt.jar</lib>
                             </libs>
-                            <!--<dependencies>
-                                <dependency>
-                                    <groupId>net.sf.proguard</groupId>
-                                    <artifactId>proguard-base</artifactId>
-                                    <version>5.2</version>
-                                    <scope>runtime</scope>
-                                </dependency>
-                            </dependencies>-->
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            <!-- /PROGUARD -->
-
         </plugins>
     </build>
 
