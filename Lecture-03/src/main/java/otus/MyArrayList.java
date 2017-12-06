@@ -3,8 +3,8 @@ package otus;
 import java.util.*;
 import java.util.function.UnaryOperator;
 
-public class MyArrayList<T> implements List<T>{
-    private T[] array;
+public class MyArrayList<T> implements List<T>, RandomAccess {
+    transient T[] array;
 
     public int size() {
         return array.length;
@@ -73,6 +73,7 @@ public class MyArrayList<T> implements List<T>{
         throw new RuntimeException();
     }
 
+    @Override
     public T get(int index) {
         if (index > array.length || index < 0) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " +  array.length);
@@ -80,6 +81,7 @@ public class MyArrayList<T> implements List<T>{
         return array[index];
     }
 
+    @Override
     public T set(int index, Object element) {
         if (index > array.length || index < 0) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " +  array.length);

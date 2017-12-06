@@ -33,10 +33,21 @@ public class AppStart {
             splittedString.add(arr[i]);
         }
         Collections.addAll(myNestedStringList, splittedString);
-        System.out.println("Collections.addAll() 'myNestedStringList' values: " + myNestedStringList);
+        System.out.println("Collections.addAll() 'myNestedStringList': " + myNestedStringList);
 
         Collections.copy(myStringList, splittedString);
-        System.out.println("Collections.copy() 'myStringList' values: " + myStringList);
+        System.out.println("The first Collections.copy() 'myStringList': " + myStringList);
+
+        Collections.copy(myStringList, splittedString);
+        System.out.println("The second Collections.copy() 'myStringList': " + myStringList);
+
+        List<String> splittedStringErr = new ArrayList<>();
+        for (int i = 0; i < arr.length; i++) {
+            splittedStringErr.add("void");
+        }
+
+        Collections.copy(myStringList, splittedStringErr);
+        System.out.println("The third Collections.copy() 'myStringList': " + myStringList);
 
         Collections.sort(myStringList, (o1, o2) -> o1.compareToIgnoreCase(o2));
         System.out.println("Collections.sort() 'myStringList' values: " + myStringList + "\n");
@@ -61,10 +72,20 @@ public class AppStart {
         System.out.println("'myNestedIntegerList' values: " + myNestedIntegerList);
 
         Collections.copy(myNumberList, integerLis);
-        System.out.println("Collections.copy() 'myNumberList' values: " + myNumberList);
+        System.out.println("The first Collections.copy() 'myNumberList': " + myNumberList);
+
+        Collections.copy(myNumberList, integerLis);
+        System.out.println("The second Collections.copy() 'myNumberList': " + myNumberList);
+
+        integerLis = new ArrayList<>();
+        for (int i = 0; i < numberValues.length; i++) {
+            integerLis.add(numberValues[i] * 0);
+        }
+        Collections.copy(myNumberList, integerLis);
+        System.out.println("The third Collections.copy() 'myNumberList': " + myNumberList);
 
         Collections.sort(myNumberList, (o1, o2) -> o1 < o2 ? -1 : o1 == o2 ? 0 : 1);
-        System.out.println("Collections.sort() 'myNumberList' values: " + myNumberList);
+        System.out.println("Collections.sort() 'myNumberList': " + myNumberList);
     }
 
 }
