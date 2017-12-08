@@ -43,7 +43,7 @@ public class AppStart {
 
         List<String> splittedStringErr = new ArrayList<>();
         for (int i = 0; i < arr.length; i++) {
-            splittedStringErr.add("void");
+            splittedStringErr.add("void:" + i);
         }
 
         Collections.copy(myStringList, splittedStringErr);
@@ -51,7 +51,6 @@ public class AppStart {
 
         Collections.sort(myStringList, (o1, o2) -> o1.compareToIgnoreCase(o2));
         System.out.println("Collections.sort() 'myStringList' values: " + myStringList + "\n");
-
 
         List<List<Integer>> myNestedIntegerList = new MyArrayList<>();
         List<Integer> myNumberList = new MyArrayList<>();

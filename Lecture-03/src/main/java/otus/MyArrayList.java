@@ -1,9 +1,10 @@
 package otus;
 
 import java.util.*;
+import java.util.ListIterator;
 import java.util.function.UnaryOperator;
 
-public class MyArrayList<T> implements List<T>, RandomAccess {
+public class MyArrayList<T> implements List<T> {
     transient T[] array;
 
     public int size() {
@@ -108,7 +109,7 @@ public class MyArrayList<T> implements List<T>, RandomAccess {
     }
 
     public ListIterator listIterator() {
-        return listIterator;
+        return new MyIterator();
     }
 
     public ListIterator listIterator(int index) {
@@ -140,7 +141,7 @@ public class MyArrayList<T> implements List<T>, RandomAccess {
         return Arrays.toString(array);
     }
 
-    ListIterator listIterator = new ListIterator() {
+    private class MyIterator implements ListIterator {
         private int position = 0;
 
         @Override
@@ -184,8 +185,12 @@ public class MyArrayList<T> implements List<T>, RandomAccess {
 
         @Override
         public void set(Object o) {
-            if (position < array.length) {
-                array[position-1] = (T)o;
+            if (position <= array.length) {
+                try {
+                    MyArrayList.this.set(position-1, o);
+                } catch (IndexOutOfBoundsException ex) {
+                    throw new ConcurrentModificationException();
+                }
             }
         }
 
@@ -193,5 +198,5 @@ public class MyArrayList<T> implements List<T>, RandomAccess {
         public void add(Object o) {
 
         }
-    };
+    }
 }
