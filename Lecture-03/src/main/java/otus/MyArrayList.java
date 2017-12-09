@@ -7,6 +7,12 @@ import java.util.function.UnaryOperator;
 public class MyArrayList<T> implements List<T> {
     transient T[] array;
 
+    private void rangeCheck(int index) {
+        if (index > array.length || index < 0) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", size: " +  array.length);
+        }
+    }
+
     public int size() {
         return array.length;
     }
@@ -76,17 +82,13 @@ public class MyArrayList<T> implements List<T> {
 
     @Override
     public T get(int index) {
-        if (index > array.length || index < 0) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " +  array.length);
-        }
+        rangeCheck(index);
         return array[index];
     }
 
     @Override
     public T set(int index, Object element) {
-        if (index > array.length || index < 0) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " +  array.length);
-        }
+        rangeCheck(index);
         T old = array[index];
         array[index] = (T)element;
         return old;
@@ -97,7 +99,21 @@ public class MyArrayList<T> implements List<T> {
     }
 
     public T remove(int index) {
-        throw new RuntimeException();
+        rangeCheck(index);
+
+        T old = array[index];
+        T[] newArray = (T[]) new Object[array.length-1];
+
+        int k=0;
+        for (int i = 0; i < array.length; i++) {
+            if (i != index) {
+                newArray[k] = array[i];
+                k++;
+            }
+        }
+
+        array = newArray;
+        return old;
     }
 
     public int indexOf(Object o) {

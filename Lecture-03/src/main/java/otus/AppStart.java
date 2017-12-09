@@ -50,7 +50,14 @@ public class AppStart {
         System.out.println("The third Collections.copy() 'myStringList': " + myStringList);
 
         Collections.sort(myStringList, (o1, o2) -> o1.compareToIgnoreCase(o2));
-        System.out.println("Collections.sort() 'myStringList' values: " + myStringList + "\n");
+        System.out.println("Collections.sort() 'myStringList' values: " + myStringList);
+
+        myStringList.remove(5);
+        System.out.println("remove() 5 index 'myStringList' values: " + myStringList);
+
+        myStringList.remove(0);
+        System.out.println("remove() 0 index 'myStringList' values: " + myStringList + "\n");
+
 
         List<List<Integer>> myNestedIntegerList = new MyArrayList<>();
         List<Integer> myNumberList = new MyArrayList<>();
@@ -85,6 +92,12 @@ public class AppStart {
 
         Collections.sort(myNumberList, (o1, o2) -> o1 < o2 ? -1 : o1 == o2 ? 0 : 1);
         System.out.println("Collections.sort() 'myNumberList': " + myNumberList);
+
+        myNumberList.remove(5);
+        System.out.println("remove() 5 index 'myNumberList' values: " + myNumberList);
+
+        myNumberList.remove(0);
+        System.out.println("remove() 0 index 'myNumberList' values: " + myNumberList);
     }
 
 }
