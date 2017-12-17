@@ -1,32 +1,31 @@
 package otus;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Benchmark implements BenchmarkMBean {
 
     public void run() {
-
-        int timeout = 1000;
+        LinkedList<Object> array = new LinkedList();
         int size = 1_000_000;
 
         try {
-            ArrayList<String> array = new ArrayList();
             while(true) {
-                System.out.println("Array add");
+                System.out.println("Array add: 1_000_000");
                 for (int i = 0; i < size; i++) {
                     array.add(new String(""));
                 }
                 System.out.println("Array size: " + array.size());
+                Thread.sleep(1000);
 
-                System.out.println("Remove 1000");
-                for (int i = 0; i < 1000; i++) {
+                System.out.println("Remove 100_000");
+                for (int i = 0; i < 100_000; i++) {
                     array.remove(i);
                 }
                 System.out.println("Array size: " + array.size());
-
-                Thread.sleep(timeout);
+                Thread.sleep(1000);
             }
         } catch (Exception ex) {
+            System.out.println("Array size: " + array.size());
             ex.printStackTrace();
         }
     }
