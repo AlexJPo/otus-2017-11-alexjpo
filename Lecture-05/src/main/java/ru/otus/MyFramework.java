@@ -3,7 +3,6 @@ package ru.otus;
 import ru.otus.annotations.*;
 
 import java.io.File;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
@@ -11,17 +10,72 @@ import java.util.*;
 public class MyFramework {
     public static <T> void runForClass(Class<T> type) {
         try {
+            System.out.println("MyFramework: runForClass()");
+            runBefore(type);
+            runTest(type);
+            runAfter(type);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private static <T> void runBefore(Class<T> type) {
+        try {
             if (!type.isAnnotation()) {
                 Object myClass = Class.forName(type.getName()).newInstance();
                 Method[] methods = myClass.getClass().getDeclaredMethods();
 
-                System.out.println("MyFramework: runForClass()");
-                runViaAnnotation(myClass, methods, Before.class);
-                runViaAnnotation(myClass, methods, Test.class);
-                runViaAnnotation(myClass, methods, After.class);
+                for (Method method : methods) {
+                    if (method.isAnnotationPresent(Before.class)) {
+                        System.out.println("MyFramework: use Before");
+                        System.out.println("MyFramework: call " + method.getName());
+                        method.invoke(myClass);
+                        System.out.println("---------------------------------");
+                    }
+                }
             }
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static <T> void runTest(Class<T> type) {
+        try {
+            if (!type.isAnnotation()) {
+                Object myClass = Class.forName(type.getName()).newInstance();
+                Method[] methods = myClass.getClass().getDeclaredMethods();
+
+                for (Method method : methods) {
+                    if (method.isAnnotationPresent(Test.class)) {
+                        System.out.println("MyFramework: use Test");
+                        System.out.println("MyFramework: call " + method.getName());
+                        method.invoke(myClass);
+                        System.out.println("---------------------------------");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static <T> void runAfter(Class<T> type) {
+        try {
+            if (!type.isAnnotation()) {
+                Object myClass = Class.forName(type.getName()).newInstance();
+                Method[] methods = myClass.getClass().getDeclaredMethods();
+
+                for (Method method : methods) {
+                    if (method.isAnnotationPresent(After.class)) {
+                        System.out.println("MyFramework: use After");
+                        System.out.println("MyFramework: call " + method.getName());
+                        method.invoke(myClass);
+                        System.out.println("---------------------------------");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -66,20 +120,4 @@ public class MyFramework {
         }
         return classes;
     }
-
-    private static void runViaAnnotation(Object myClass, Method[] methods, Class<? extends Annotation> annotationClass) {
-        try {
-            for (Method method : methods) {
-                if (method.isAnnotationPresent(annotationClass)) {
-                    System.out.println("MyFramework: use " + annotationClass.getSimpleName());
-                    System.out.println("MyFramework: call " + method.getName());
-                    method.invoke(myClass);
-                    System.out.println("---------------------------------");
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }

@@ -7,6 +7,7 @@ public class Benchmark implements BenchmarkMBean {
     public void run() {
         LinkedList<Object> array = new LinkedList();
         int size = 1_000_000;
+        int outOfMemory = 25_000;
 
         try {
             while(true) {
@@ -17,8 +18,8 @@ public class Benchmark implements BenchmarkMBean {
                 System.out.println("Array size: " + array.size());
                 Thread.sleep(1000);
 
-                System.out.println("Remove 100_000");
-                for (int i = 0; i < 100_000; i++) {
+                System.out.println("Remove " + outOfMemory);
+                for (int i = 0; i < outOfMemory; i++) {
                     array.remove(i);
                 }
                 System.out.println("Array size: " + array.size());
