@@ -2,7 +2,8 @@ package ru.otus;
 
 public class AppStart {
     public static void main(String[] args) {
-        MyFramework.runForClass(MyClass.class);
-        //MyFramework.runForPackage("ru.otus");
+        //MyFramework myFramework = new MyFramework(MyClass.class);
+
+        MyFramework myFramework2 = new MyFramework("ru.otus");
     }
 }

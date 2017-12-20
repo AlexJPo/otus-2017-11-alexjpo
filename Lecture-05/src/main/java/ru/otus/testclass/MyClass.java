@@ -1,4 +1,4 @@
-package ru.otus;
+package ru.otus.testclass;
 
 import ru.otus.annotations.*;
 import java.util.HashMap;
@@ -9,14 +9,17 @@ public class MyClass {
     private HashMap<Integer, String> myMap = new HashMap<>();
 
     @Before
-    @Test
     public void setDefaultData() {
         myMap.put(counter, "Default data");
         counter++;
     }
 
+    public void setData(String value) {
+        myMap.put(counter, value);
+        counter++;
+    }
+
     @After
-    @Test
     public void printDefaultMap() {
         System.out.println(myMap.toString());
     }
