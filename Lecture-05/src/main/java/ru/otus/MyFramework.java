@@ -7,19 +7,23 @@ import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
+
 import ru.otus.annotations.*;
+import ru.otus.helper.FindClass;
 
 import java.lang.reflect.Method;
+
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Paths;
 import java.util.Set;
 
 public class MyFramework {
+    private FindClass findClass = new FindClass();
     private Reflections reflections;
     private URLClassLoader urlclassLoader;
-    private Object myClass;
     private ClassLoader classLoader;
+    private Object myClass;
     private Method[] classMethods;
 
     public MyFramework() {
@@ -35,7 +39,7 @@ public class MyFramework {
 
     public void runForPackage(String packageName) {
         initClassFinder(packageName);
-        
+
         Set<Class<? extends Object>> allClasses = reflections.getSubTypesOf(Object.class);
         allClasses.forEach(this::runForClass);
     }
@@ -53,6 +57,8 @@ public class MyFramework {
                             new SubTypesScanner(false),
                             new TypeAnnotationsScanner(),
                             new MethodAnnotationsScanner()));
+
+            classLoader = new URLClassLoader(urlclassLoader.getURLs());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -62,35 +68,35 @@ public class MyFramework {
         try {
             System.out.println("MyFramework: runForClass()");
 
-            initClassForTest(type);
-            runBefore(type);
-            runTest(type);
-            runAfter(type);
+            if (!type.isAnnotation()) {
+                iniClassForTest(type);
+
+                runBefore();
+                runTest();
+                runAfter();
+            }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    private <T> void initClassForTest(Class<T> type) {
+    private <T> void iniClassForTest(Class<T> type) {
         try {
-            classLoader = new URLClassLoader(urlclassLoader.getURLs());
             myClass = classLoader.loadClass(type.getName()).newInstance();
             classMethods = myClass.getClass().getDeclaredMethods();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private <T> void runBefore(Class<T> type) {
+    private void runBefore() {
         try {
-            if (!type.isAnnotation()) {
-                for (Method method: classMethods) {
-                    if (method.isAnnotationPresent(Before.class)) {
-                        System.out.println("MyFramework: use Before");
-                        System.out.println("MyFramework: call " + method.getName());
-                        method.invoke(myClass);
-                        System.out.println("---------------------------------");
-                    }
+            for (Method method: classMethods) {
+                if (method.isAnnotationPresent(Before.class)) {
+                    System.out.println("MyFramework: use Before");
+                    System.out.println("MyFramework: call " + method.getName());
+                    method.invoke(myClass);
+                    System.out.println("---------------------------------");
                 }
             }
         } catch (Exception e) {
@@ -98,16 +104,14 @@ public class MyFramework {
         }
     }
 
-    private <T> void runTest(Class<T> type) {
+    private void runTest() {
         try {
-            if (!type.isAnnotation()) {
-                for (Method method : classMethods) {
-                    if (method.isAnnotationPresent(Test.class)) {
-                        System.out.println("MyFramework: use Test");
-                        System.out.println("MyFramework: call " + method.getName());
-                        method.invoke(myClass);
-                        System.out.println("---------------------------------");
-                    }
+            for (Method method : classMethods) {
+                if (method.isAnnotationPresent(Test.class)) {
+                    System.out.println("MyFramework: use Test");
+                    System.out.println("MyFramework: call " + method.getName());
+                    method.invoke(myClass);
+                    System.out.println("---------------------------------");
                 }
             }
         } catch (Exception e) {
@@ -115,16 +119,14 @@ public class MyFramework {
         }
     }
 
-    private <T> void runAfter(Class<T> type) {
+    private void runAfter() {
         try {
-            if (!type.isAnnotation()) {
-                for (Method method : classMethods) {
-                    if (method.isAnnotationPresent(After.class)) {
-                        System.out.println("MyFramework: use After");
-                        System.out.println("MyFramework: call " + method.getName());
-                        method.invoke(myClass);
-                        System.out.println("---------------------------------");
-                    }
+            for (Method method : classMethods) {
+                if (method.isAnnotationPresent(After.class)) {
+                    System.out.println("MyFramework: use After");
+                    System.out.println("MyFramework: call " + method.getName());
+                    method.invoke(myClass);
+                    System.out.println("---------------------------------");
                 }
             }
         } catch (Exception e) {
