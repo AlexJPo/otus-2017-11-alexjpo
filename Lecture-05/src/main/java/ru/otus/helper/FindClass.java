@@ -1,10 +1,25 @@
 package ru.otus.helper;
 
+
+import static org.reflections.ReflectionUtils.*;
+
+import org.reflections.Reflections;
+import org.reflections.scanners.MethodAnnotationsScanner;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
+import ru.otus.MyFramework;
+import ru.otus.annotations.Test;
+import ru.otus.testclass.MyTestClass;
+
 import java.io.File;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
+import java.net.URLClassLoader;
+import java.nio.file.Paths;
+import java.util.*;
 
 public class FindClass {
     public Set<Class> getClassFromPackage(String packageName) {
@@ -12,7 +27,25 @@ public class FindClass {
         String path = packageName.replace('.', '/');
 
         try {
-            Package[] pa = Package.getPackages();
+            URL testClassesURL = Paths.get("target/test-classes").toUri().toURL();
+
+            URLClassLoader urlclassLoader = URLClassLoader.newInstance(new URL[]{testClassesURL},
+                    ClasspathHelper.staticClassLoader());
+
+            Reflections reflections = new Reflections(new ConfigurationBuilder()
+                    .addUrls(ClasspathHelper.forPackage(packageName, urlclassLoader))
+                    .addClassLoader(urlclassLoader)
+                    .filterInputsBy(new FilterBuilder().includePackage(packageName))
+                    .setScanners(
+                            new SubTypesScanner(false),
+                            new TypeAnnotationsScanner(),
+                            new MethodAnnotationsScanner()));
+
+            /*Reflections reflections = new Reflections(ClasspathHelper.forPackage(packageName),
+                    new SubTypesScanner(false));*/
+
+            Set<Class<? extends Object>> allClasses = reflections.getSubTypesOf(Object.class);
+
             Enumeration<URL> resources = classLoader.getResources(path);
             Set<File> dirs = new HashSet<>();
             while (resources.hasMoreElements()) {
@@ -24,6 +57,8 @@ public class FindClass {
             for (File directory : dirs) {
                 classes.addAll(findClasses(directory, packageName));
             }
+
+            classes.addAll(allClasses);
 
             return classes;
         } catch (Exception ex) {
