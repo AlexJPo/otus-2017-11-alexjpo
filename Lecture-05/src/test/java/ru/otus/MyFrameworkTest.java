@@ -2,7 +2,6 @@ package ru.otus;
 
 import org.junit.Test;
 import ru.otus.annotations.Before;
-import ru.otus.helper.FindClass;
 import ru.otus.testclass.MyTestClass;
 
 import static org.junit.Assert.*;
