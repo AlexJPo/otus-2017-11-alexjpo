@@ -1,0 +1,113 @@
+package ru.otus;
+
+import com.google.gson.Gson;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class JsonSerializerTest {
+
+    private JsonSerializer jsonSerializer;
+
+    @Before
+    public void initialize() {
+        jsonSerializer = new JsonSerializer();
+    }
+
+    @Test
+    public void convertEmptyClassToJsonString() {
+        EmptyWine emptyWine = new EmptyWine();
+        jsonSerializer.objectToJson(emptyWine);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(emptyWine);
+
+        assertEquals(json, jsonSerializer.getJsonString());
+    }
+
+    @Test
+    public void convertClassPrimitivesToJsonString() {
+        PrimitiveWine primitiveWine = new PrimitiveWine();
+        primitiveWine.setPrice(145.53);
+        primitiveWine.setStrength(12.5f);
+        primitiveWine.setBalance(10);
+        primitiveWine.setAvailable(true);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(primitiveWine);
+        jsonSerializer.objectToJson(primitiveWine);
+        assertEquals(json, jsonSerializer.getJsonString());
+    }
+
+    @Test
+    public void convertClassStringToJsonString() {
+        Wine wine = new Wine();
+        wine.setName("Водка Пять Озер");
+        wine.setRatings(new Object[]{'c', "A", 5});
+
+        Gson gson = new Gson();
+        String json = gson.toJson(wine);
+        jsonSerializer.objectToJson(wine);
+        assertEquals(json, jsonSerializer.getJsonString());
+    }
+
+    @Test
+    public void convertClassNestedObjectsToJsonString() {
+        PrimitiveWine primitiveWine = new PrimitiveWine();
+        Wine wine = new Wine();
+        wine.setName("Whisky");
+        primitiveWine.setWine(wine);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(primitiveWine);
+        jsonSerializer.objectToJson(primitiveWine);
+        assertEquals(json, jsonSerializer.getJsonString());
+    }
+
+    @Test
+    public void convertClassArrayNestedObjectsToJsonString() {
+        PrimitiveWine primitiveWine = new PrimitiveWine();
+
+        Wine wine = new Wine();
+        wine.setName("Whisky");
+        primitiveWine.setWine(wine);
+
+        int size = 2;
+        Wine[] wines = new Wine[size];
+        for (int i = 0 ; i < size; i++) {
+            Wine wine1 = new Wine();
+            wine1.setName("some wine - " + i);
+            wines[i] = wine1;
+        }
+        primitiveWine.setWines(wines);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(primitiveWine);
+        jsonSerializer.objectToJson(primitiveWine);
+        assertEquals(json, jsonSerializer.getJsonString());
+    }
+
+    @Test
+    public void convertClassArraysOfPrimitivesToJsonString() {
+        PrimitiveWine primitiveWine = new PrimitiveWine();
+        primitiveWine.setCapacity(new int[] {1,2,3});
+
+        Gson gson = new Gson();
+        String json = gson.toJson(primitiveWine);
+        jsonSerializer.objectToJson(primitiveWine);
+        assertEquals(json, jsonSerializer.getJsonString());
+    }
+
+    @Test
+    public void convertClassArraysOfStringsToJsonString() {
+        PrimitiveWine primitiveWine = new PrimitiveWine();
+        primitiveWine.setGrapes(new String[] {"Мерло","Корвина","Рондинелла"});
+
+        Gson gson = new Gson();
+        String json = gson.toJson(primitiveWine);
+        jsonSerializer.objectToJson(primitiveWine);
+        assertEquals(json, jsonSerializer.getJsonString());
+    }
+
+}
