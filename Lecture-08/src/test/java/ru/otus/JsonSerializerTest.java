@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class JsonSerializerTest {
@@ -110,4 +113,26 @@ public class JsonSerializerTest {
         assertEquals(json, jsonSerializer.getJsonString());
     }
 
+    @Test
+    public void convertClassListOfObjectsToJSonString() {
+        CollectionsWine collectionsWine = new CollectionsWine();
+
+        Wine wineBeer = new Wine();
+        wineBeer.setName("Пиво");
+        wineBeer.setRatings(new Object[]{15,20});
+
+        Wine wineWine = new Wine();
+        wineWine.setName("Вино");
+
+        List<Wine> grapeList = new ArrayList<>();
+        grapeList.add(wineBeer);
+        grapeList.add(wineWine);
+
+        collectionsWine.setGrapes(grapeList);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(collectionsWine);
+        jsonSerializer.objectToJson(collectionsWine);
+        assertEquals(json, jsonSerializer.getJsonString());
+    }
 }

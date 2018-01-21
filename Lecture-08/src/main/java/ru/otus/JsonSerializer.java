@@ -3,11 +3,13 @@ package ru.otus;
 import org.json.simple.JSONObject;
 
 import javax.json.*;
+import java.awt.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.List;
 
 public class JsonSerializer {
     private JsonObjectBuilder jsonObject = Json.createObjectBuilder();
@@ -44,25 +46,53 @@ public class JsonSerializer {
 
                         if (value != null) {
                             int size = Array.getLength(value);
-                            Object[] arr = new Object[Array.getLength(value)];
                             JsonArrayBuilder builder = Json.createArrayBuilder();
 
                             for (int i = 0; i < size; i++) {
-                                arr[i] = Array.get(value, i);
-                                createArrayObject(builder, cls.toString(), Array.get(value, i));
-
-                                //if (arr[i].getClass().isPrimitive()) {
-                                    //createArrayObject(builder, cls.toString(), Array.get(value, i));
-                                //} else {
-                                    /*if (arr[i] != null) {
+                                if (cls.toString().contains("class java.lang")) {
+                                    createArrayObject(builder, Array.get(value, i).getClass().getTypeName(), Array.get(value, i));
+                                } else {
+                                    if (Array.get(value, i).getClass().isPrimitive() || cls.isPrimitive()) {
+                                        createArrayObject(builder, cls.toString(), Array.get(value, i));
+                                    } else {
                                         JsonObjectBuilder classBuilder = Json.createObjectBuilder();
-                                        generateJsonTree(classBuilder, arr[i]);
-                                        jsonObject.add(field.getName(), classBuilder.build());
+                                        generateJsonTree(classBuilder, Array.get(value, i));
+                                        builder.add(classBuilder.build());
                                     }
-                                //}*/
+                                }
                             }
                             jsonObject.add(field.getName(), builder.build());
                         }
+                    } else if (Collection.class.isAssignableFrom(field.getType())) {
+                        Object value = field.get(someObject);
+
+                        if (value != null) {
+                            ArrayList<Object> arr = (ArrayList)value;
+                            Type genericParameterTypes = field.getGenericType();
+                            ParameterizedType pType = (ParameterizedType) genericParameterTypes;
+                            Class cls = (Class)pType.getActualTypeArguments()[0];
+
+                            int size = arr.size();
+                            JsonArrayBuilder builder = Json.createArrayBuilder();
+
+                            for (int i = 0; i < size; i++) {
+                                if (cls.toString().contains("class java.lang")) {
+                                    createArrayObject(builder, arr.get(i).getClass().getTypeName(), arr.get(i));
+                                } else {
+                                    if (arr.get(i).getClass().isPrimitive() || cls.isPrimitive()) {
+                                        createArrayObject(builder, cls.toString(), arr.get(i));
+                                    } else {
+                                        JsonObjectBuilder classBuilder = Json.createObjectBuilder();
+                                        generateJsonTree(classBuilder, arr.get(i));
+                                        builder.add(classBuilder.build());
+                                    }
+                                }
+                            }
+                            jsonObject.add(field.getName(), builder.build());
+                        }
+
+
+
                     } else {
                         Object myClass = field.get(someObject);
                         if (myClass != null) {
@@ -77,41 +107,53 @@ public class JsonSerializer {
         }
     }
 
+    private void fillJsonArray(Object value, Class cls, JsonObjectBuilder jsonObject) {
+    }
+
     private void createArrayObject(JsonArrayBuilder builder, String arrayType, Object value) {
         switch (arrayType) {
             case "boolean":
+            case "java.lang.Boolean":
             case "class java.lang.Boolean":
                 builder.add((boolean)value);
                 break;
             case "byte":
+            case "java.lang.Byte":
             case "class java.lang.Byte":
                 builder.add((byte) value);
                 break;
             case "short":
+            case "java.lang.Short":
             case "class java.lang.Short":
                 builder.add((short) value);
                 break;
-            case "char":
-            case "class java.lang.Character":
-                builder.add((char) value);
-                break;
             case "int":
+            case "java.lang.Integer":
             case "class java.lang.Integer":
                 builder.add((int) value);
                 break;
             case "long":
+            case "java.lang.Long":
             case "class java.lang.Long":
                 builder.add((long) value);
                 break;
             case "float":
+            case "java.lang.Float":
             case "class java.lang.Float":
                 builder.add((float) value);
                 break;
             case "double":
+            case "java.lang.Double":
             case "class java.lang.Double":
                 builder.add((double) value);
                 break;
+            case "char":
+            case "java.lang.Character":
+            case "class java.lang.Character":
             case "class java.lang.String":
+                builder.add(value.toString());
+                break;
+            default:
                 builder.add(value.toString());
                 break;
         }
