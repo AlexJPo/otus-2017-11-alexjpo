@@ -78,6 +78,7 @@ public class JsonSerializer {
                     }
                 }
             }
+            arr.clear();
             jsonObject.add(field.getName(), builder.build());
         }
     }
