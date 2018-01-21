@@ -5,8 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.Assert.*;
 
 public class JsonSerializerTest {
@@ -124,7 +122,7 @@ public class JsonSerializerTest {
         Wine wineWine = new Wine();
         wineWine.setName("Вино");
 
-        List<Wine> grapeList = new ArrayList<>();
+        ArrayList<Wine> grapeList = new ArrayList<>();
         grapeList.add(wineBeer);
         grapeList.add(wineWine);
 

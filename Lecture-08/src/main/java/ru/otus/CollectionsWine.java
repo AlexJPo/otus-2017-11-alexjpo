@@ -1,15 +1,15 @@
 package ru.otus;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class CollectionsWine {
-    private List<Wine> grapes;
+    private ArrayList<Wine> grapes;
 
-    public List<Wine> getGrapes() {
+    public ArrayList<Wine> getGrapes() {
         return grapes;
     }
 
-    public void setGrapes(List<Wine> grapes) {
+    public void setGrapes(ArrayList<Wine> grapes) {
         this.grapes = grapes;
     }
 }

@@ -1,15 +1,11 @@
 package ru.otus;
 
-import org.json.simple.JSONObject;
-
 import javax.json.*;
-import java.awt.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
-import java.util.List;
 
 public class JsonSerializer {
     private JsonObjectBuilder jsonObject = Json.createObjectBuilder();
@@ -41,58 +37,11 @@ public class JsonSerializer {
                             jsonObject.add(field.getName(), value.toString());
                         }
                     } else if (field.getType().isArray()) {
-                        Class cls = field.getType().getComponentType();
                         Object value = field.get(someObject);
-
-                        if (value != null) {
-                            int size = Array.getLength(value);
-                            JsonArrayBuilder builder = Json.createArrayBuilder();
-
-                            for (int i = 0; i < size; i++) {
-                                if (cls.toString().contains("class java.lang")) {
-                                    createArrayObject(builder, Array.get(value, i).getClass().getTypeName(), Array.get(value, i));
-                                } else {
-                                    if (Array.get(value, i).getClass().isPrimitive() || cls.isPrimitive()) {
-                                        createArrayObject(builder, cls.toString(), Array.get(value, i));
-                                    } else {
-                                        JsonObjectBuilder classBuilder = Json.createObjectBuilder();
-                                        generateJsonTree(classBuilder, Array.get(value, i));
-                                        builder.add(classBuilder.build());
-                                    }
-                                }
-                            }
-                            jsonObject.add(field.getName(), builder.build());
-                        }
+                        readArray(jsonObject, field, value);
                     } else if (Collection.class.isAssignableFrom(field.getType())) {
                         Object value = field.get(someObject);
-
-                        if (value != null) {
-                            ArrayList<Object> arr = (ArrayList)value;
-                            Type genericParameterTypes = field.getGenericType();
-                            ParameterizedType pType = (ParameterizedType) genericParameterTypes;
-                            Class cls = (Class)pType.getActualTypeArguments()[0];
-
-                            int size = arr.size();
-                            JsonArrayBuilder builder = Json.createArrayBuilder();
-
-                            for (int i = 0; i < size; i++) {
-                                if (cls.toString().contains("class java.lang")) {
-                                    createArrayObject(builder, arr.get(i).getClass().getTypeName(), arr.get(i));
-                                } else {
-                                    if (arr.get(i).getClass().isPrimitive() || cls.isPrimitive()) {
-                                        createArrayObject(builder, cls.toString(), arr.get(i));
-                                    } else {
-                                        JsonObjectBuilder classBuilder = Json.createObjectBuilder();
-                                        generateJsonTree(classBuilder, arr.get(i));
-                                        builder.add(classBuilder.build());
-                                    }
-                                }
-                            }
-                            jsonObject.add(field.getName(), builder.build());
-                        }
-
-
-
+                        readCollection(jsonObject, field, value);
                     } else {
                         Object myClass = field.get(someObject);
                         if (myClass != null) {
@@ -101,13 +50,60 @@ public class JsonSerializer {
                             jsonObject.add(field.getName(), classBuilder.build());
                         }
                     }
-
                 }
             }
         }
     }
 
-    private void fillJsonArray(Object value, Class cls, JsonObjectBuilder jsonObject) {
+    private void readCollection(JsonObjectBuilder jsonObject, Field field, Object value) throws IllegalAccessException {
+        if (value != null) {
+            ArrayList<Object> arr = (ArrayList)value;
+            Type genericParameterTypes = field.getGenericType();
+            ParameterizedType pType = (ParameterizedType) genericParameterTypes;
+            Class cls = (Class)pType.getActualTypeArguments()[0];
+
+            int size = arr.size();
+            JsonArrayBuilder builder = Json.createArrayBuilder();
+
+            for (int i = 0; i < size; i++) {
+                if (cls.toString().contains("class java.lang")) {
+                    createArrayObject(builder, arr.get(i).getClass().getTypeName(), arr.get(i));
+                } else {
+                    if (arr.get(i).getClass().isPrimitive() || cls.isPrimitive()) {
+                        createArrayObject(builder, cls.toString(), arr.get(i));
+                    } else {
+                        JsonObjectBuilder classBuilder = Json.createObjectBuilder();
+                        generateJsonTree(classBuilder, arr.get(i));
+                        builder.add(classBuilder.build());
+                    }
+                }
+            }
+            jsonObject.add(field.getName(), builder.build());
+        }
+    }
+
+    private void readArray(JsonObjectBuilder jsonObject, Field field, Object value) throws IllegalAccessException {
+        if (value != null) {
+            int size = Array.getLength(value);
+
+            Class cls = field.getType().getComponentType();
+            JsonArrayBuilder builder = Json.createArrayBuilder();
+
+            for (int i = 0; i < size; i++) {
+                if (cls.toString().contains("class java.lang")) {
+                    createArrayObject(builder, Array.get(value, i).getClass().getTypeName(), Array.get(value, i));
+                } else {
+                    if (Array.get(value, i).getClass().isPrimitive() || cls.isPrimitive()) {
+                        createArrayObject(builder, cls.toString(), Array.get(value, i));
+                    } else {
+                        JsonObjectBuilder classBuilder = Json.createObjectBuilder();
+                        generateJsonTree(classBuilder, Array.get(value, i));
+                        builder.add(classBuilder.build());
+                    }
+                }
+            }
+            jsonObject.add(field.getName(), builder.build());
+        }
     }
 
     private void createArrayObject(JsonArrayBuilder builder, String arrayType, Object value) {
