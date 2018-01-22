@@ -66,6 +66,19 @@ public class MyFramework {
             System.out.println("MyFramework: runForClass()");
 
             if (!type.isAnnotation()) {
+                URL classesURL = Paths.get("target/test-classes").toUri().toURL();
+                urlclassLoader = URLClassLoader.newInstance(new URL[]{classesURL},
+                        ClasspathHelper.staticClassLoader());
+                reflections = new Reflections(new ConfigurationBuilder()
+                        .addUrls(ClasspathHelper.forClass(type, urlclassLoader))
+                        .addClassLoader(urlclassLoader)
+                        .setScanners(
+                                new SubTypesScanner(false),
+                                new TypeAnnotationsScanner(),
+                                new MethodAnnotationsScanner()));
+
+                classLoader = new URLClassLoader(urlclassLoader.getURLs());
+
                 Object myTestClass = classLoader.loadClass(type.getName()).newInstance();
 
                 TestSuite testSuite = new TestSuite();

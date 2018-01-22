@@ -18,22 +18,22 @@ public class TestSuite {
             Method[] classMethods = testClass.getClass().getDeclaredMethods();
             for (Method method: classMethods) {
                 if (method.isAnnotationPresent(Before.class)) {
-                    System.out.println("MyFramework: use Before");
-                    System.out.println("MyFramework: call " + method.getName());
+                    System.out.println("Before test");
+                    System.out.println("Call method: " + method.getName());
                     method.invoke(testClass);
                     System.out.println("---------------------------------");
                 }
 
                 if (method.isAnnotationPresent(Test.class)) {
-                    System.out.println("MyFramework: use Test");
-                    System.out.println("MyFramework: call " + method.getName());
+                    System.out.println("Test test");
+                    System.out.println("Call method: " + method.getName());
                     method.invoke(testClass);
                     System.out.println("---------------------------------");
                 }
 
                 if (method.isAnnotationPresent(After.class)) {
-                    System.out.println("MyFramework: use After");
-                    System.out.println("MyFramework: call " + method.getName());
+                    System.out.println("After test");
+                    System.out.println("Call method: " + method.getName());
                     method.invoke(testClass);
                     System.out.println("---------------------------------");
                 }
