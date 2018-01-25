@@ -30,7 +30,7 @@ public class JsonSerializerTest {
         assertEquals(json, jsonSerializer.getJsonString());
     }
 
-    //@Test
+    @Test
     public void convertClassPrimitivesToJsonString() {
         PrimitiveWine primitiveWine = new PrimitiveWine();
         primitiveWine.setPrice(145.53);
@@ -44,7 +44,7 @@ public class JsonSerializerTest {
         assertEquals(json, jsonSerializer.getJsonString());
     }
 
-    //@Test
+    @Test
     public void convertClassStringToJsonString() {
         Wine wine = new Wine();
         wine.setName("Водка Пять Озер");
@@ -56,7 +56,7 @@ public class JsonSerializerTest {
         assertEquals(json, jsonSerializer.getJsonString());
     }
 
-    //@Test
+    @Test
     public void convertClassNestedObjectsToJsonString() {
         PrimitiveWine primitiveWine = new PrimitiveWine();
         Wine wine = new Wine();
@@ -92,7 +92,7 @@ public class JsonSerializerTest {
         assertEquals(json, jsonSerializer.getJsonString());
     }
 
-    //@Test
+    @Test
     public void convertClassArraysOfPrimitivesToJsonString() {
         PrimitiveWine primitiveWine = new PrimitiveWine();
         primitiveWine.setCapacity(new int[] {1,2,3});
@@ -103,7 +103,7 @@ public class JsonSerializerTest {
         assertEquals(json, jsonSerializer.getJsonString());
     }
 
-    //@Test
+    @Test
     public void convertClassArraysOfStringsToJsonString() {
         PrimitiveWine primitiveWine = new PrimitiveWine();
         primitiveWine.setGrapes(new String[] {"Мерло","Корвина","Рондинелла"});
