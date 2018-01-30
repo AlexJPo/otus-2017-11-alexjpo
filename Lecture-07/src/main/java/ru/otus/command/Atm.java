@@ -1,8 +1,8 @@
-package ru.otus;
+package ru.otus.command;
 
 import java.util.*;
 
-public class Atm implements IResetCommand, IBalanceCommand {
+public class Atm implements ICommand {
     private HashMap<Integer, Integer> initialBalance = new HashMap<>();
     private HashMap<Integer, Integer> transaction = new HashMap<>();
     private Map<Integer, Integer> storage = new TreeMap(new Comparator<Integer>() {
@@ -52,10 +52,10 @@ public class Atm implements IResetCommand, IBalanceCommand {
         transaction.clear();
     }
 
-    public void setInitialBalance(int count, int nominal) {
-        if (initialBalance.isEmpty()) {
-            initialBalance.put(count, nominal);
-            storage.put(count, nominal);
+    public void setInitialBalance(int amount, int nominal) {
+         if (initialBalance.isEmpty()) {
+            initialBalance.put(amount, nominal);
+            storage.put(amount, nominal);
         }
     }
 

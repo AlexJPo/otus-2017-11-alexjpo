@@ -1,33 +1,40 @@
-package ru.otus;
+package ru.otus.mementoobserver;
 
 import org.junit.Before;
 import org.junit.Test;
-import ru.otus.command.Atm;
 
 import static org.junit.Assert.*;
 
-public class AtmTest {
-    private Atm atm;
+public class AtmOriginatorTest {
+    private AtmOriginator atmOriginator;
 
     @Before
     public void init() {
-        atm = new Atm();
+        atmOriginator = new AtmOriginator();
     }
 
     @Test
     //изначальный баланс
     public void atmHaveInitialState() {
-        Atm atm = new Atm();
+        AtmOriginator atm = new AtmOriginator();
         atm.setInitialBalance(5, 500);
-        int balance = atm.getBalance();
-        assertEquals(balance, 2500);
+
+        InitialBalanceCaretaker initialBalanceCaretaker = new InitialBalanceCaretaker();
+        initialBalanceCaretaker.setInitialBalance(atm.saveInitialBalance());
+        InitialBalanceMemento initialBalanceMemento = initialBalanceCaretaker.getInitialBalance();
+
+        assertEquals(initialBalanceMemento.getAmount(), 5);
+        assertEquals(initialBalanceMemento.getNominal(), 500);
     }
 
     @Test
     //сброс к изначальному балансу
     public void resetAtmToInitialState() {
-        Atm atm = new Atm();
+        AtmOriginator atm = new AtmOriginator();
         atm.setInitialBalance(5, 500);
+
+        InitialBalanceCaretaker initialBalanceCaretaker = new InitialBalanceCaretaker();
+        initialBalanceCaretaker.setInitialBalance(atm.saveInitialBalance());
 
         int initialBalance = atm.getBalance();
         assertEquals(initialBalance, 2500);
@@ -36,7 +43,7 @@ public class AtmTest {
         int balance = atm.getBalance();
         assertEquals(balance, 3100);
 
-        atm.reset();
+        atm.reset(initialBalanceCaretaker.getInitialBalance());
         int balanceAfterReset = atm.getBalance();
         assertEquals(balanceAfterReset, 2500);
     }
@@ -44,38 +51,27 @@ public class AtmTest {
     @Test
     //выдавать сумму остатка денежных средств
     public void getAtmBalance() {
-        int balance = atm.getBalance();
+        int balance = atmOriginator.getBalance();
         assertEquals(balance, 0);
     }
 
     @Test
     //принимать банкноты разных номиналов (на каждый номинал должна быть своя ячейка)
-    public void putMoneyToAtm() {
-        atm.deposit(5, 100);
-        atm.deposit(1, 500);
-        int balanceAfter = atm.getBalance();
+    public void putMoneyToAtmOriginator() {
+        atmOriginator.deposit(5, 100);
+        atmOriginator.deposit(1, 500);
+        int balanceAfter = atmOriginator.getBalance();
         assertEquals(balanceAfter, 1000);
-    }
-
-    @Test
-    //выдавать запрошенную сумму минимальным количеством банкнот
-    public void canReceiveMoneyByMinimalNominal() {
-        atm.deposit(10, 500);
-        atm.deposit(10, 50);
-        atm.deposit(10, 100);
-
-        atm.getMoney(0);
-        int balance = atm.getBalance();
-        assertEquals(balance, 6500);
     }
 
     @Test(expected = RuntimeException.class)
     //выдавать ошибку если сумму нельзя выдать
     public void canNotReceiveMoneyOverLimit() {
-        Atm atm = new Atm();
+        AtmOriginator atm = new AtmOriginator();
         atm.deposit(5, 100);
 
         atm.getMoney(1500);
         int balance = atm.getBalance();
     }
+
 }

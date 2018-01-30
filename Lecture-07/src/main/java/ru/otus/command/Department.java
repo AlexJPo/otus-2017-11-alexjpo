@@ -1,9 +1,9 @@
-package ru.otus;
+package ru.otus.command;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Department implements IResetCommand {
+public class Department  {
     private List<Atm> atms = new ArrayList<>();
 
     public void register(Atm atm) {
@@ -16,14 +16,13 @@ public class Department implements IResetCommand {
 
     public int getBalanceSum() {
         int balance = 0;
-        for (IBalanceCommand command : atms) {
+        for (ICommand command : atms) {
             balance += command.getBalance();
         }
         return balance;
     }
 
-    @Override
     public void reset() {
-        atms.forEach(IResetCommand::reset);
+        atms.forEach(ICommand::reset);
     }
 }

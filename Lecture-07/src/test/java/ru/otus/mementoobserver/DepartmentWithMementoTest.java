@@ -1,27 +1,30 @@
-package ru.otus;
+package ru.otus.mementoobserver;
 
 import org.junit.Before;
 import org.junit.Test;
-import ru.otus.command.Atm;
-import ru.otus.command.Department;
 
 import static org.junit.Assert.*;
 
-public class DepartmentTest {
-    private Department department;
+public class DepartmentWithMementoTest {
+    private DepartmentWithMemento department;
 
     @Before
     public void init() {
-         department = new Department();
+        department = new DepartmentWithMemento();
     }
 
     @Test
     public void atmHasInitialState() {
+        DepartmentWithMemento department = new DepartmentWithMemento();
         for (int i = 1; i < 3; i++) {
-            Atm atm = new Atm();
+            AtmOriginator atm = new AtmOriginator();
             atm.setInitialBalance(i, 100);
             atm.deposit(i, 500);
-            department.register(atm);
+
+            InitialBalanceCaretaker initialBalanceCaretaker = new InitialBalanceCaretaker();
+            initialBalanceCaretaker.setInitialBalance(atm.saveInitialBalance());
+
+            department.register(atm, initialBalanceCaretaker);
         }
         assertEquals(department.getAtms().size(), 2);
     }
@@ -30,10 +33,15 @@ public class DepartmentTest {
     //может инициировать событие – восстановить состояние всех ATM до начального
     public void resetAllAtmsToInitialState() {
         for (int i = 1; i < 4; i++) {
-            Atm atm = new Atm();
+            AtmOriginator atm = new AtmOriginator();
+            atm.addObserver(department);
             atm.setInitialBalance(i, 300);
             atm.deposit(i, 500);
-            department.register(atm);
+
+            InitialBalanceCaretaker initialBalanceCaretaker = new InitialBalanceCaretaker();
+            initialBalanceCaretaker.setInitialBalance(atm.saveInitialBalance());
+
+            department.register(atm, initialBalanceCaretaker);
         }
         assertEquals(department.getAtms().size(), 3);
 
@@ -49,9 +57,9 @@ public class DepartmentTest {
     //Приложение может содержать несколько ATM
     public void shouldStoreDepartment() {
         for (int i = 1; i < 3; i++) {
-            Atm atm = new Atm();
+            AtmOriginator atm = new AtmOriginator();
             atm.deposit(i, 500);
-            department.register(atm);
+            department.register(atm, new InitialBalanceCaretaker());
         }
         assertEquals(department.getAtms().size(), 2);
     }
@@ -60,11 +68,12 @@ public class DepartmentTest {
     //Может собирать сумму остатков со всех ATM
     public void shouldReceiveSumBalanceFromAtms() {
         for (int i = 1; i < 3; i++) {
-            Atm atm = new Atm();
+            AtmOriginator atm = new AtmOriginator();
+            atm.addObserver(department);
             atm.deposit(i, 100);
             atm.deposit(i, 200);
             atm.deposit(i, 500);
-            department.register(atm);
+            department.register(atm, new InitialBalanceCaretaker());
         }
 
         int balanceSumBefore = department.getBalanceSum();
@@ -75,4 +84,5 @@ public class DepartmentTest {
         int balanceSumAfter = department.getBalanceSum();
         assertEquals(balanceSumAfter, 2100);
     }
+
 }
