@@ -1,5 +1,8 @@
 package ru.otus.cache;
 
+import java.lang.annotation.Annotation;
+import java.lang.ref.SoftReference;
+import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -15,6 +18,7 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
     private final boolean isEternal;
 
     private final Map<K, MyElement<K, V>> elements = new LinkedHashMap<>();
+    private int size = 0;
     private final Timer timer = new Timer();
 
     private int hit = 0;
@@ -27,14 +31,17 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
         this.isEternal = lifeTimeMs == 0 && idleTimeMs == 0 || isEternal;
     }
 
-    public void put(MyElement<K, V> element) {
+    public <T> void put(T clazz) {
         if (elements.size() == maxElements) {
             K firstKey = elements.keySet().iterator().next();
             elements.remove(firstKey);
         }
 
+        MyElement<K, V> element = new MyElement(size, new SoftReference(clazz));
+
         K key = element.getKey();
         elements.put(key, element);
+        size++;
 
         if (!isEternal) {
             if (lifeTimeMs != 0) {
@@ -48,15 +55,34 @@ public class CacheEngineImpl<K, V> implements CacheEngine<K, V> {
         }
     }
 
-    public MyElement<K, V> get(K key) {
-        MyElement<K, V> element = elements.get(key);
-        if (element != null) {
-            hit++;
-            element.setAccessed();
-        } else {
-            miss++;
+    public <T> T get(K key) {
+        for (Map.Entry<K, MyElement<K, V>> item : elements.entrySet()) {
+            if (item.getValue() != null) {
+                Object obj = item.getValue().getValue();
+                Class test = obj.getClass();
+                Field[] fields = test.getSuperclass().getDeclaredFields();
+
+                for (Field field : fields) {
+                    if (field.isAnnotationPresent(javax.persistence.Id.class)) {
+                        try {
+                            field.setAccessible(true);
+                            Object value = field.get(obj);
+                            field.setAccessible(false);
+
+                            if (key.equals(value)) {
+                                hit++;
+                                return (T) obj;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
         }
-        return element;
+
+        miss++;
+        return null;
     }
 
     public int getHitCount() {

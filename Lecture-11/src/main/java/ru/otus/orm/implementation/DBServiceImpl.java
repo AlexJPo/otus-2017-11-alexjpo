@@ -17,11 +17,9 @@ import ru.otus.orm.dataset.PhoneDataSet;
 import ru.otus.orm.dataset.UserDataSet;
 import ru.otus.orm.interfaces.IDBService;
 
-import java.lang.ref.SoftReference;
-
 public class DBServiceImpl implements IDBService {
     private final SessionFactory sessionFactory;
-    private CacheEngine<Long, SoftReference<DataSet>> cacheEngine;
+    private CacheEngine<Long, DataSet> cacheEngine;
 
     private final int maxElements = 5;
     private final long lifeTimeMs = 0;
@@ -61,20 +59,19 @@ public class DBServiceImpl implements IDBService {
         try (Session session = sessionFactory.openSession()) {
             UserDAO dao = new UserDAO(session);
             dao.save(dataSet);
-            cacheEngine.put(new MyElement(dataSet.getId(), dataSet));
+            cacheEngine.put(dataSet);
         }
     }
     @Override
     public UserDataSet read(long id) {
         try (Session session = sessionFactory.openSession()) {
             UserDAO dao = new UserDAO(session);
-            MyElement<Long, SoftReference<DataSet>> user = cacheEngine.get(id);
+            UserDataSet user = cacheEngine.get(id);
 
             if (user == null) {
                 return dao.read(id);
             } else {
-                Object reff = user.getValue();
-                return (UserDataSet) reff;
+                return user;
             }
         }
     }
@@ -84,20 +81,19 @@ public class DBServiceImpl implements IDBService {
         try (Session session = sessionFactory.openSession()) {
             AddressDAO dao = new AddressDAO(session);
             dao.save(dataSet);
-            cacheEngine.put(new MyElement(dataSet.getId(), dataSet));
+            cacheEngine.put(dataSet);
         }
     }
     @Override
     public AddressDataSet readAddress(long id) {
         try (Session session = sessionFactory.openSession()) {
             AddressDAO dao = new AddressDAO(session);
-            MyElement<Long, SoftReference<DataSet>> address = cacheEngine.get(id);
+            AddressDataSet address = cacheEngine.get(id);
 
             if (address == null) {
                 return dao.read(id);
             } else {
-                Object reff = address.getValue();
-                return (AddressDataSet) reff;
+                return address;
             }
         }
     }
@@ -107,20 +103,19 @@ public class DBServiceImpl implements IDBService {
         try (Session session = sessionFactory.openSession()) {
             PhoneDAO dao = new PhoneDAO(session);
             dao.save(dataSet);
-            cacheEngine.put(new MyElement(dataSet.getId(), dataSet));
+            cacheEngine.put(dataSet);
         }
     }
     @Override
     public PhoneDataSet readPhone(long id) {
         try (Session session = sessionFactory.openSession()) {
             PhoneDAO dao = new PhoneDAO(session);
-            MyElement<Long, SoftReference<DataSet>> phone = cacheEngine.get(id);
+            PhoneDataSet phone = cacheEngine.get(id);
 
             if (phone == null) {
                 return dao.read(id);
             } else {
-                Object reff = phone.getValue();
-                return (PhoneDataSet) reff;
+                return phone;
             }
         }
     }

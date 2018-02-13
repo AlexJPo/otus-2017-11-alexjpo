@@ -53,10 +53,37 @@ public class DBServiceImplTest {
         addressDataSet.setStreet("some address for user");
         dbService.saveAddress(addressDataSet);
 
+        AddressDataSet addressDataSet2 = new AddressDataSet();
+        addressDataSet2.setStreet("some address for user 2");
+        dbService.saveAddress(addressDataSet2);
+
         AddressDataSet address = dbService.readAddress(1);
         assertEquals(addressDataSet.getId(), address.getId());
         assertEquals(addressDataSet.getStreet(), address.getStreet());
 
+        address = dbService.readAddress(2);
+        assertEquals(addressDataSet2.getId(), address.getId());
+        assertEquals(addressDataSet2.getStreet(), address.getStreet());
+    }
+
+    @Test
+    public void checkTheSameKeyWithDifferentDataSet() throws Exception {
+        AddressDataSet addressDataSet = new AddressDataSet();
+        addressDataSet.setStreet("some address for user");
+        dbService.saveAddress(addressDataSet);
+
+        UserDataSet userDataSet = new UserDataSet();
+        userDataSet.setAge(25);
+        userDataSet.setName("user1");
+        dbService.save(userDataSet);
+
+        AddressDataSet address = dbService.readAddress(1);
+        assertEquals(addressDataSet.getId(), address.getId());
+        assertEquals(addressDataSet.getStreet(), address.getStreet());
+
+        UserDataSet user = dbService.read(1);
+        assertEquals(user.getId(), userDataSet.getId());
+        assertEquals(user.getName(), userDataSet.getName());
     }
 
     @Test
