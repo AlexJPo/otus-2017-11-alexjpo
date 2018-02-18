@@ -1,24 +1,19 @@
-package ru.otus.orm.implementation;
+package ru.otus.orm.implementations;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
-import ru.otus.cache.CacheEngine;
 import ru.otus.cache.CacheEngineImpl;
-import ru.otus.orm.dao.AddressDAO;
-import ru.otus.orm.dao.PhoneDAO;
-import ru.otus.orm.dao.UserDAO;
-import ru.otus.orm.dataset.AddressDataSet;
-import ru.otus.orm.dataset.DataSet;
-import ru.otus.orm.dataset.PhoneDataSet;
-import ru.otus.orm.dataset.UserDataSet;
+import ru.otus.cache.ICacheEngine;
+import ru.otus.orm.dao.*;
+import ru.otus.orm.dataset.*;
 import ru.otus.orm.interfaces.IDBService;
 
 public class DBServiceImpl implements IDBService {
     private final SessionFactory sessionFactory;
-    private CacheEngine<Long, DataSet> cacheEngine;
+    private ICacheEngine<Long, DataSet> cacheEngine;
 
     private final int maxElements = 5;
     private final long lifeTimeMs = 0;
@@ -58,14 +53,14 @@ public class DBServiceImpl implements IDBService {
         try (Session session = sessionFactory.openSession()) {
             UserDAO dao = new UserDAO(session);
             dao.save(dataSet);
-            cacheEngine.put(dataSet.getId(), dataSet);
+            cacheEngine.put(dataSet);
         }
     }
     @Override
     public UserDataSet read(long id) {
         try (Session session = sessionFactory.openSession()) {
             UserDAO dao = new UserDAO(session);
-            UserDataSet user = cacheEngine.get(id, UserDataSet.class);
+            UserDataSet user = cacheEngine.get(id);
 
             if (user == null) {
                 return dao.read(id);
@@ -80,14 +75,14 @@ public class DBServiceImpl implements IDBService {
         try (Session session = sessionFactory.openSession()) {
             AddressDAO dao = new AddressDAO(session);
             dao.save(dataSet);
-            cacheEngine.put(dataSet.getId(), dataSet);
+            cacheEngine.put(dataSet);
         }
     }
     @Override
     public AddressDataSet readAddress(long id) {
         try (Session session = sessionFactory.openSession()) {
             AddressDAO dao = new AddressDAO(session);
-            AddressDataSet address = cacheEngine.get(id, AddressDataSet.class);
+            AddressDataSet address = cacheEngine.get(id);
 
             if (address == null) {
                 return dao.read(id);
@@ -102,14 +97,14 @@ public class DBServiceImpl implements IDBService {
         try (Session session = sessionFactory.openSession()) {
             PhoneDAO dao = new PhoneDAO(session);
             dao.save(dataSet);
-            cacheEngine.put(dataSet.getId(), dataSet);
+            cacheEngine.put(dataSet);
         }
     }
     @Override
     public PhoneDataSet readPhone(long id) {
         try (Session session = sessionFactory.openSession()) {
             PhoneDAO dao = new PhoneDAO(session);
-            PhoneDataSet phone = cacheEngine.get(id, PhoneDataSet.class);
+            PhoneDataSet phone = cacheEngine.get(id);
 
             if (phone == null) {
                 return dao.read(id);

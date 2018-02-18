@@ -1,9 +1,9 @@
 package ru.otus.cache;
 
 public interface CacheEngine<K, V> {
-    <T> void put(T element);
+    <T> void put(Long id, T element);
 
-    <T> T get(K key);
+    <T> T get(K key, Class<T> element);
 
     int getHitCount();
 

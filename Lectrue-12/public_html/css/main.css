@@ -1,0 +1,16 @@
+html, body { margin: 0; padding: 0; }
+/* TOP MENU */
+.top { margin: 0 0 20px 0; }
+.top-menu { list-style: none; margin: 10px 0 0 20px; padding: 0; }
+.top-menu-item { display: inline-block; margin: 0 5px; }
+.top-menu-item:first-child { margin-left: 0; }
+.top-menu-item:last-child { margin-rightt: 0; }
+.top-menu-item_link { text-decoration: none; }
+.top-menu-item_link:hover { text-decoration: underline; }
+
+/* LOGIN */
+.login { margin: 20px; }
+.login-from { display: inline-block; }
+.login-label { display: block; margin-top: 10px; }
+.login-input { display: block; margin-top: 5px; }
+#login-submit { display: block; width: 100%; margin-top: 15px; }

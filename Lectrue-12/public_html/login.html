@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" content="text/html;">
+<head>
+    <title>Index</title>
+    <link href="css/main.css" rel="stylesheet">
+</head>
+<body>
+    <div class="top">
+        <ul class="top-menu">
+            <li class="top-menu-item">
+                <a class="top-menu-item_link" href="login">Login</a>
+            </li>
+            <li class="top-menu-item">
+                <a class="top-menu-item_link"href="admin">Admin</a>
+            </li>
+        </ul>
+    </div>
+    <div class="login">
+        <form class="login-from" action="/login" method="POST">
+            <label class="login-label">Login:
+                <input class="login-input" type="text" name="login" placeholder="Enter login"/>
+            </label>
+            <label class="login-label">Password:
+                <input class="login-input" type="password" name="password" />
+            </label>
+            <input type="submit" id="login-submit" value="submit">
+        </form>
+    </div>
+</body>
+</html>
