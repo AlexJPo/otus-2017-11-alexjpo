@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Admin</title>
+    <link href="css/main.css" rel="stylesheet">
+</head>
+<body>
+    <div class="top">
+        <ul class="top-menu">
+            <li class="top-menu-item">
+                <a class="top-menu-item_link" href="login">Login</a>
+            </li>
+            <li class="top-menu-item">
+                <a class="top-menu-item_link" href="admin">Admin</a>
+            </li>
+        </ul>
+    </div>
+
+    <p><b>You authorized as</b>: ${login}</p>
+
+    <b>Cache info:</b>
+    <table border="1" style="border-collapse: collapse; text-align: center; min-width: 300px;">
+        <thead>
+            <tr>
+                <th>Size</th>
+                <th>Hit</th>
+                <th>Miss</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>${parameters.get('size')}</td>
+                <td>${parameters.get('hit')}</td>
+                <td>${parameters.get('miss')}</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
