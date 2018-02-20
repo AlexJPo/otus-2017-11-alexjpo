@@ -1,5 +1,7 @@
 package ru.otus.servlets;
 
+import ru.otus.utils.Constants;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +15,6 @@ import static ru.otus.Main.dbService;
 public class AdminServlet extends HttpServlet{
     private static final String DEFAULT_USER_NAME = "UNKNOWN";
     private static final String ADMIN_PAGE_TEMPLATE = "admin.html";
-    private static final String ADMIN_AUTH_PARAM = "authorize";
 
     private static Map<String, Object> createPageVariablesMap(HttpServletRequest request) {
         Map<String, Object> pageVariables = new HashMap<>();
@@ -21,12 +22,12 @@ public class AdminServlet extends HttpServlet{
         pageVariables.put("URL", request.getRequestURL().toString());
         pageVariables.put("locale", request.getLocale());
         pageVariables.put("sessionId", request.getSession().getId());
-        pageVariables.put("authorize", request.getServletContext().getAttribute(ADMIN_AUTH_PARAM));
+        pageVariables.put("authorize", request.getSession().getAttribute(Constants.ADMIN_AUTH_PARAM));
         pageVariables.put("parameters", dbService.getCacheStatus());
 
         String login = (String) request
                 .getSession()
-                .getAttribute(LoginServlet.LOGIN_PARAMETER_NAME);
+                .getAttribute(Constants.LOGIN_PARAMETER_NAME);
         pageVariables.put("login", login != null ? login : DEFAULT_USER_NAME);
 
         return pageVariables;
@@ -35,7 +36,7 @@ public class AdminServlet extends HttpServlet{
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, Object> pageVariables = createPageVariablesMap(request);
 
-        if (pageVariables.get(ADMIN_AUTH_PARAM) == null) {
+        if (pageVariables.get(Constants.ADMIN_AUTH_PARAM) == null) {
             response.sendRedirect(request.getContextPath() +"/login");
         } else {
             response.getWriter()

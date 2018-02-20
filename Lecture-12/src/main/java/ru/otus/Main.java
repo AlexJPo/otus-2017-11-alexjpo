@@ -24,7 +24,7 @@ public class Main {
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
-        context.addServlet(new ServletHolder(new LoginServlet("anonymous")), "/login");
+        context.addServlet(new ServletHolder(new LoginServlet()), "/login");
         context.addServlet(AdminServlet.class, "/admin");
 
         Server server = new Server(PORT);
@@ -33,22 +33,22 @@ public class Main {
         prepareData();
 
 
-        Thread thread = new Thread(() -> {
-            while (true) {
+       /* Thread thread = new Thread(() -> {
+            while (true) {*/
                 dbService.readAddress(1);
                 dbService.read(1);
                 dbService.readPhone(1);
 
                 dbService.readAddress(2);
                 dbService.readPhone(3);
-                try {
+             /*   try {
                     Thread.sleep(timeout);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         });
-        thread.start();
+        thread.start();*/
 
         server.start();
         server.join();
