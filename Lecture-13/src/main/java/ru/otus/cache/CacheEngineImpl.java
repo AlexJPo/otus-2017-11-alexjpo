@@ -1,11 +1,7 @@
 package ru.otus.cache;
 
 import java.lang.ref.SoftReference;
-import java.lang.reflect.Field;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.function.Function;
 
 public class CacheEngineImpl<K, V> implements ICacheEngine<K, V> {
@@ -16,8 +12,7 @@ public class CacheEngineImpl<K, V> implements ICacheEngine<K, V> {
     private final long idleTimeMs;
     private final boolean isEternal;
 
-    private final Map<K, MyElement<K, V>> elements = new LinkedHashMap<>();
-    private int size = 0;
+    private final Map<K, SoftReference> elements = new LinkedHashMap<>();
     private final Timer timer = new Timer();
 
     private int hit = 0;
@@ -30,17 +25,17 @@ public class CacheEngineImpl<K, V> implements ICacheEngine<K, V> {
         this.isEternal = lifeTimeMs == 0 && idleTimeMs == 0 || isEternal;
     }
 
-    public <T> void put(T clazz) {
+    public <T> void put(Long id, T clazz) {
         if (elements.size() == maxElements) {
             K firstKey = elements.keySet().iterator().next();
             elements.remove(firstKey);
         }
 
-        MyElement<K, V> element = new MyElement(size, new SoftReference(clazz));
+        HashMap<Long, T> elementValue = new HashMap();
+        elementValue.put(id, clazz);
 
-        K key = element.getKey();
-        elements.put(key, element);
-        size++;
+        K key = (K) clazz.getClass().getSimpleName();
+        elements.put(key, new SoftReference(elementValue));
 
         if (!isEternal) {
             if (lifeTimeMs != 0) {
@@ -54,30 +49,13 @@ public class CacheEngineImpl<K, V> implements ICacheEngine<K, V> {
         }
     }
 
-    public <T> T get(K key) {
-        for (Map.Entry<K, MyElement<K, V>> item : elements.entrySet()) {
-            if (item.getValue() != null) {
-                Object obj = item.getValue().getValue();
-                Class test = obj.getClass();
-                Field[] fields = test.getSuperclass().getDeclaredFields();
+    public <T> T get(K key, Class<T> clazz) {
+        HashMap<Long, T> map = (HashMap<Long, T>) elements.get(clazz.getSimpleName()).get();
+        T result = map.get(key);
 
-                for (Field field : fields) {
-                    if (field.isAnnotationPresent(javax.persistence.Id.class)) {
-                        try {
-                            field.setAccessible(true);
-                            Object value = field.get(obj);
-                            field.setAccessible(false);
-
-                            if (key.equals(value)) {
-                                hit++;
-                                return (T) obj;
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
+        if (result != null) {
+            hit++;
+            return result;
         }
 
         miss++;
@@ -97,15 +75,25 @@ public class CacheEngineImpl<K, V> implements ICacheEngine<K, V> {
         timer.cancel();
     }
 
+    @Override
+    public Map<String, Object> getStatus() {
+        HashMap<String, Object> status = new HashMap<>();
+        status.put("size", elements.size());
+        status.put("hit", hit);
+        status.put("miss", miss);
+
+        return status;
+    }
+
     private TimerTask getTimerTask(final K key, Function<MyElement<K, V>, Long> timeFunction) {
         return new TimerTask() {
             @Override
             public void run() {
-                MyElement<K, V> element = elements.get(key);
+               /* MyElement<K, V> element = elements.get(key);
                 if (element == null || isT1BeforeT2(timeFunction.apply(element), System.currentTimeMillis())) {
                     elements.remove(key);
                     this.cancel();
-                }
+                }*/
             }
         };
     }
