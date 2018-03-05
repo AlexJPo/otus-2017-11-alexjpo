@@ -7,24 +7,26 @@ import java.util.List;
 public class ArraySort {
     private int[] array;
     private List<Thread> threadList = new ArrayList<>();
-    private final int maxThread = 4;
-    private int step;
-
-    public int[] getArray() {
-        return array;
-    }
+    private static final int MAX_THREADS = 4;
+    private static final int SHORT_ARRAY_SIZE = 8;
 
     public void setArray(int[] array) {
         this.array = array;
     }
 
-    public int[] sort() {
-        step = array.length / maxThread;
-        int[][] arrParts = splitArray();
+    private boolean isShortArray() {
+        return array.length <= SHORT_ARRAY_SIZE;
+    }
 
+    public int[] sort() {
+        if (isShortArray()) {
+            Arrays.sort(array);
+            return this.array;
+        }
+
+        int[][] arrParts = splitArray();
         for (int i = 0; i < arrParts.length; i++) {
             int finalI = i;
-
             Thread thread = new Thread(() -> Arrays.sort(arrParts[finalI]));
             thread.setName("Part of array: " + i);
             threadList.add(thread);
@@ -47,13 +49,28 @@ public class ArraySort {
 
     private int[][] splitArray() {
         int j = 0;
-        int[][] arrParts = new int[maxThread][];
+        int step = 2;
+        int[][] arrParts = new int[MAX_THREADS][];
+        int module = array.length % MAX_THREADS;
 
-        for (int i = 0; i < array.length;) {
-            arrParts[j] = new int[]{array[i], array[i + 1]};
-            i += step;
-            j++;
+        if (module == 0) {
+            step = array.length / MAX_THREADS;
+            for (int i = 0; i < array.length;) {
+                arrParts[j] = Arrays.copyOfRange(array, i, i + step);
+                i += step;
+                j++;
+            }
+        } else {
+            int l = array.length / MAX_THREADS;
+            int k = 0;
+            for (int i = 0; i < l; i++) {
+                arrParts[i] = Arrays.copyOfRange(array, j, j + step);
+                j += step;
+                k++;
+            }
+            arrParts[k] = Arrays.copyOfRange(array, j, array.length);
         }
+
         return arrParts;
     }
 

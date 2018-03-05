@@ -17,18 +17,6 @@ public class ArraySortTest {
     }
 
     @Test
-    public void shouldSortArray() {
-        int[] arr = new int[] {4,3,1,2,7,9,6,5};
-        int[] result = new int[] {1,2,3,4,5,6,7,9};
-
-        arraySort = new ArraySort();
-        arraySort.setArray(arr);
-        int[] sortResult = arraySort.sort();
-
-        assertArrayEquals(result, sortResult);
-    }
-
-    @Test
     public void shouldMergeArrays() {
         int[] arr1 = new int[] {1,2,3};
         int[] arr2 = new int[] {4,5,6};
@@ -40,5 +28,77 @@ public class ArraySortTest {
         for (int i = 0; i < arr3.length; i++) {
             assertEquals(arr3[i], result[i]);
         }
+    }
+
+    @Test
+    public void shouldNotSortVeryShortArray() {
+        int[] arr = new int[] {4};
+        int[] result = new int[] {4};
+
+        arraySort = new ArraySort();
+        arraySort.setArray(arr);
+        int[] sortResult = arraySort.sort();
+
+        assertArrayEquals(result, sortResult);
+    }
+
+    @Test
+    public void shouldSortShortArray() {
+        int[] arr = new int[] {4,3};
+        int[] result = new int[] {3,4};
+
+        arraySort = new ArraySort();
+        arraySort.setArray(arr);
+        int[] sortResult = arraySort.sort();
+
+        assertArrayEquals(result, sortResult);
+    }
+
+    @Test
+    public void shouldSortEvenArray() {
+        int[] arr = new int[] {4,3,1,2};
+        int[] result = new int[] {1,2,3,4};
+
+        arraySort = new ArraySort();
+        arraySort.setArray(arr);
+        int[] sortResult = arraySort.sort();
+
+        assertArrayEquals(result, sortResult);
+    }
+
+    @Test
+    public void shouldSortOddArray() {
+        int[] arr = new int[] {4,3,1,2,7};
+        int[] result = new int[] {1,2,3,4,7};
+
+        arraySort = new ArraySort();
+        arraySort.setArray(arr);
+        int[] sortResult = arraySort.sort();
+
+        assertArrayEquals(result, sortResult);
+    }
+
+    @Test
+    public void shouldBigEvenArray() {
+        int[] arr = new int[] {4,3,1,2,9,7,15,10,14,20,11,6};
+        int[] result = new int[] {1,2,3,4,6,7,9,10,11,14,15,20};
+
+        arraySort = new ArraySort();
+        arraySort.setArray(arr);
+        int[] sortResult = arraySort.sort();
+
+        assertArrayEquals(result, sortResult);
+    }
+
+    @Test
+    public void shouldBigOddArray() {
+        int[] arr = new int[] {4,3,1,2,9,7,15,10,14,20,11,6,88};
+        int[] result = new int[] {1,2,3,4,6,7,9,10,11,14,15,20,88};
+
+        arraySort = new ArraySort();
+        arraySort.setArray(arr);
+        int[] sortResult = arraySort.sort();
+
+        assertArrayEquals(result, sortResult);
     }
 }
