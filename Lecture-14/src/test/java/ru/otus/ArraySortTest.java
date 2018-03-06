@@ -101,4 +101,16 @@ public class ArraySortTest {
 
         assertArrayEquals(result, sortResult);
     }
+
+    @Test
+    public void shouldSortArrayOfNineElements() {
+        int[] arr = new int[]{4, 10, 3, 1, 2, 7, 9, 6, 5};
+        int[] result = new int[]{1, 2, 3, 4, 5, 6, 7, 9, 10};
+
+        arraySort = new ArraySort();
+        arraySort.setArray(arr);
+        int[] sortResult = arraySort.sort();
+
+        assertArrayEquals(result, sortResult);
+    }
 }

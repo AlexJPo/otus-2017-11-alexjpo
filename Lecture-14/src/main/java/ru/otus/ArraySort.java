@@ -49,24 +49,23 @@ public class ArraySort {
 
     private int[][] splitArray() {
         int j = 0;
-        int step = 2;
+        int step = array.length / MAX_THREADS;
         int[][] arrParts = new int[MAX_THREADS][];
         int module = array.length % MAX_THREADS;
 
         if (module == 0) {
-            step = array.length / MAX_THREADS;
             for (int i = 0; i < array.length;) {
                 arrParts[j] = Arrays.copyOfRange(array, i, i + step);
                 i += step;
                 j++;
             }
         } else {
-            int l = array.length / MAX_THREADS;
+            int l = array.length - step - 1;
             int k = 0;
-            for (int i = 0; i < l; i++) {
-                arrParts[i] = Arrays.copyOfRange(array, j, j + step);
-                j += step;
+            for (int i = 0; i < l; i += step) {
+                arrParts[k] = Arrays.copyOfRange(array, i, i + step);
                 k++;
+                j+=step;
             }
             arrParts[k] = Arrays.copyOfRange(array, j, array.length);
         }
