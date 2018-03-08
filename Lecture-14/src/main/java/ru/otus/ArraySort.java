@@ -48,28 +48,17 @@ public class ArraySort {
     }
 
     private int[][] splitArray() {
-        int j = 0;
         int step = array.length / MAX_THREADS;
         int[][] arrParts = new int[MAX_THREADS][];
-        int module = array.length % MAX_THREADS;
 
-        if (module == 0) {
-            for (int i = 0; i < array.length;) {
-                arrParts[j] = Arrays.copyOfRange(array, i, i + step);
-                i += step;
-                j++;
+        for (int i = 0; i < MAX_THREADS; i++) {
+            int from = i * step;
+            int to = (i + 1) * step;
+            if (i == MAX_THREADS - 1) {
+                to = array.length;
             }
-        } else {
-            int l = array.length - step - 1;
-            int k = 0;
-            for (int i = 0; i < l; i += step) {
-                arrParts[k] = Arrays.copyOfRange(array, i, i + step);
-                k++;
-                j+=step;
-            }
-            arrParts[k] = Arrays.copyOfRange(array, j, array.length);
+            arrParts[i] = Arrays.copyOfRange(array, from, to);
         }
-
         return arrParts;
     }
 

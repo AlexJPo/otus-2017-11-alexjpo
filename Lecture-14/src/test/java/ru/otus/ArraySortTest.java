@@ -113,4 +113,28 @@ public class ArraySortTest {
 
         assertArrayEquals(result, sortResult);
     }
+
+    @Test
+    public void shouldSplitTenElementsArray() {
+        int[] arr = new int[] {4,10,3,1,2,7,9,6,5,11};
+        int[] result = new int[] {1,2,3,4,5,6,7,9,10,11};
+
+        arraySort = new ArraySort();
+        arraySort.setArray(arr);
+        int[] sortResult = arraySort.sort();
+
+        assertArrayEquals(result, sortResult);
+    }
+
+    @Test
+    public void shouldSplit12ElementsArray() {
+        int[] arr = new int[] {4,10,3,1,2,7,9,6,5,11,8,12};
+        int[] result = new int[] {1,2,3,4,5,6,7,8,9,10,11,12};
+
+        arraySort = new ArraySort();
+        arraySort.setArray(arr);
+        int[] sortResult = arraySort.sort();
+
+        assertArrayEquals(result, sortResult);
+    }
 }
