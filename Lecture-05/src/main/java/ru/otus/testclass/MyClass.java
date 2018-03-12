@@ -19,6 +19,15 @@ public class MyClass {
         counter++;
     }
 
+    @Test
+    public int getCounter() {
+        return counter;
+    }
+
+    public void setCounter(int counter) {
+        this.counter = counter;
+    }
+
     @After
     public void printDefaultMap() {
         System.out.println(myMap.toString());

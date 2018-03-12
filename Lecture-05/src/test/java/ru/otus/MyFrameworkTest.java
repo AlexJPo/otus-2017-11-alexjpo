@@ -1,17 +1,30 @@
 package ru.otus;
 
+import org.junit.After;
 import org.junit.Test;
+import ru.otus.annotations.Before;
 import ru.otus.testclass.MyClass;
 import ru.otus.testclass.MyTestClass;
 
 import static org.junit.Assert.*;
 
 public class MyFrameworkTest {
+    private MyFramework myFramework;
+
+    @Before
+    public void before() throws Exception {
+        myFramework = new MyFramework();
+    }
 
     @Test
     public void runForClass() throws Exception {
-        MyFramework myFramework = new MyFramework();
+        myFramework = new MyFramework();
         myFramework.runForClass(MyClass.class);
+    }
+
+    @After
+    public void after() throws Exception {
+        myFramework = null;
     }
 
     @Test

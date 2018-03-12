@@ -8,10 +8,7 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
-import ru.otus.annotations.*;
 import ru.otus.testclass.TestSuite;
-
-import java.lang.reflect.Method;
 
 import java.net.URL;
 import java.net.URLClassLoader;
