@@ -64,8 +64,7 @@ public class MyFramework {
 
             if (!type.isAnnotation()) {
                 URL classesURL = Paths.get("target/test-classes").toUri().toURL();
-                urlclassLoader = URLClassLoader.newInstance(new URL[]{classesURL},
-                        ClasspathHelper.staticClassLoader());
+                urlclassLoader = URLClassLoader.newInstance(new URL[]{classesURL}, ClasspathHelper.staticClassLoader());
                 reflections = new Reflections(new ConfigurationBuilder()
                         .addUrls(ClasspathHelper.forClass(type, urlclassLoader))
                         .addClassLoader(urlclassLoader)

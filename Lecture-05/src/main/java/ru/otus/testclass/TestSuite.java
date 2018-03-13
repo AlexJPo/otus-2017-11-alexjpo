@@ -23,24 +23,26 @@ public class TestSuite {
         prepareTests();
         try {
             for (Method method : testMethods) {
-                invokeBeforeMethods();
-                method.invoke(testClass);
-                invokeAfterMethod();
+                Object obj = testClass.getClass().newInstance();
+
+                invokeBeforeMethods(obj);
+                method.invoke(obj);
+                invokeAfterMethod(obj);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void invokeAfterMethod() throws IllegalAccessException, InvocationTargetException {
+    private void invokeAfterMethod(Object obj) throws IllegalAccessException, InvocationTargetException {
         for (Method beforeMethod : afterMethods) {
-            beforeMethod.invoke(testClass);
+            beforeMethod.invoke(obj);
         }
     }
 
-    private void invokeBeforeMethods() throws IllegalAccessException, InvocationTargetException {
+    private void invokeBeforeMethods(Object obj) throws IllegalAccessException, InvocationTargetException {
         for (Method beforeMethod : beforeMethods) {
-            beforeMethod.invoke(testClass);
+            beforeMethod.invoke(obj);
         }
     }
 
